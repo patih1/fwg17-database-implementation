@@ -1,6 +1,6 @@
-create type "roles" as enum ('admin', 'staff', 'customer');
-create type "sizes" as enum ('small', 'medium', 'large');
-create type "statuses" as enum ('on-progress', 'delivered', 'canceled', 'ready-to-pick');
+--create type "roles" as enum ('admin', 'staff', 'customer');
+--create type "sizes" as enum ('small', 'medium', 'large');
+--create type "statuses" as enum ('on-progress', 'delivered', 'canceled', 'ready-to-pick');
 
 create table "users" (
 	"id" serial primary key,
@@ -125,8 +125,8 @@ create table "message" (
 ----------------------------------------------------------------------------------------------------------------
 
 begin;
-	insert into "users" ("fullName", "email", "password", "address", "phoneNumber")
-	('Sarah Johnson', 'sarah.johnson@example.com', 'qWErT123', '456 Elm Ave', '082345678901'),
+insert into "users" ("fullName", "email", "password", "address", "phoneNumber") 
+values ('Sarah Johnson', 'sarah.johnson@example.com', 'qWErT123', '456 Elm Ave', '082345678901'),
 	('David Brown', 'david.brown@example.com', '7sD9F8w', '789 Oak Rd', '083456789012'),
 	('Emily Davis', 'emily.davis@example.com', 'tRp2kQs', '101 Pine Ln', '084567890123'),
 	('Michael Lee', 'michael.lee@example.com', 'MhK5fjQ', '202 Cedar St', '085678901234'),
@@ -176,10 +176,10 @@ begin;
 -----------------------------------------------------------------------------------------------------------------
 
 	insert into "products" ("name", "description", "price", "isRecommended")
-	('Cappuccino', 'A classic Italian coffee with espresso, steamed milk, and foam', 25000, true),
+	values ('Cappuccino', 'A classic Italian coffee with espresso, steamed milk, and foam', 25000, true),
 	('Mocha', 'A luscious combination of espresso, chocolate, and milk', 32000, true),
 	('Americano', 'A simple yet strong black coffee made from espresso and water', 22000, false),
-	('Macchiato', 'Espresso "stained" with a small amount of frothy milk, 26000', false),
+	('Macchiato', 'Espresso stained with a small amount of frothy milk', 26000, false),
 	('Iced Coffee', 'Chilled coffee served with ice and optionally, cream and sugar', 27000, true),
 	('Turkish Coffee', 'Finely ground coffee beans simmered with water and cardamom', 25000, false),
 	('Cold Brew', 'Coffee brewed with cold water for a smooth and less acidic taste', 32000, true),
@@ -208,7 +208,7 @@ begin;
 	('Caprese Salad', 'Fresh tomatoes, mozzarella, basil, and balsamic glaze', 35000, true),
 	('Beef Burrito', 'Flour tortilla filled with seasoned beef, rice, beans, and salsa', 35000, false),
 	('Chicken Alfredo', 'Fettuccine pasta with creamy Alfredo sauce and grilled chicken', 40000, true),
-	('Iced Coffee', 'Chilled coffee with milk and sweetener', 20000, true),
+	('Iced Latte Coffee', 'Chilled coffee with milk and sweetener', 20000, true),
 	('Spinach and Artichoke Dip', 'Creamy dip with spinach, artichokes, and melted cheese', 30000, false),
 	('Tuna Salad', 'Tuna, mixed greens, olives, and vinaigrette dressing', 35000, true),
 	('Hawaiian Pizza', 'Pizza with ham, pineapple, and mozzarella cheese', 45000, true),
@@ -247,12 +247,89 @@ begin;
 ------------------------------------------------------------------------------------------------------------------------------------
 	
 	insert into "categories" ("name")
-	('coffee'), ('non coffee'), ('food');
+	values ('coffee'), ('non coffee'), ('food');
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
 	insert into "productCategories" ("productId", "categoryId")
-	(1, 1);
-
+	values (1, 1),
+	(2, 1),
+	(3, 1),
+	(4, 1),
+	(5, 1),
+	(6, 1),
+	(7, 1),
+	(8, 1),
+	(9, 1),
+	(10, 1),
+	(11, 1),
+	(12, 1),
+	(13, 1),
+	(14, 1),
+	(15, 1),
+	(16, 1),
+	(17, 1),
+	(18, 1),
+	(19, 3),
+	(10, 3),
+	(11, 3),
+	(12, 2),
+	(13, 3),
+	(14, 3),
+	(15, 3),
+	(16, 2),
+	(17, 3),
+	(18, 3),
+	(19, 3),
+	(20, 1),
+	(21, 3),
+	(22, 3),
+	(23, 2),
+	(24, 3),
+	(25, 3),
+	(26, 3),
+	(27, 3),
+	(28, 3),
+	(29, 3),
+	(30, 1),
+	(31, 3),
+	(32, 3),
+	(33, 2),
+	(34, 3),
+	(35, 3),
+	(36, 3),
+	(37, 3),
+	(38, 3),
+	(39, 2),
+	(40, 3),
+	(41, 2),
+	(42, 3),
+	(43, 3),
+	(44, 2),
+	(45, 3),
+	(46, 3),
+	(47, 3),
+	(48, 3),
+	(49, 3),
+	(50, 3),
+	(51, 1),
+	(52, 3),
+	(53, 3),
+	(54, 3),
+	(55, 3),
+	(56, 3),
+	(57, 1),
+	(58, 3),
+	(59, 3),
+	(60, 2),
+	(61, 3),
+	(62, 3),
+	(63, 3),
+	(64, 3),
+	(65, 3),
+	(66, 2),
+	(67, 3);
 end;
+
+
 
