@@ -1,6 +1,6 @@
---create type "roles" as enum ('admin', 'staff', 'customer');
---create type "sizes" as enum ('small', 'medium', 'large');
---create type "statuses" as enum ('on-progress', 'delivered', 'canceled', 'ready-to-pick');
+create type "roles" as enum ('admin', 'staff', 'customer');
+create type "sizes" as enum ('small', 'medium', 'large');
+create type "statuses" as enum ('on-progress', 'delivered', 'canceled', 'ready-to-pick');
 
 create table "users" (
 	"id" serial primary key,
