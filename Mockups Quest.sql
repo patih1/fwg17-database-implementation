@@ -15,16 +15,12 @@ create table "users" (
 	"updatedAt" timestamp
 );
 
-insert into users ("fullName", "email", "password", "address", "phoneNumber", "role") 
-values ('Admin', 'admin.example@gmial.com', 'admin123', null, null, 'admin'),
-('staff', 'staff.example@gmial.com', 'staff123', null, null, 'staff');
-
 create table "products" (
 	"id" serial primary key,
 	"name" varchar (30) unique not null,
 	"description" text not null,
-	"price" numeric(12,2) not null,
-	"image" text,
+	"basePrice" int not null,
+	"image" varchar(255),
 	"discount" float,
 	"isRecommended" bool,
 	"createdAt" timestamp default now(),
@@ -33,68 +29,36 @@ create table "products" (
 
 create table "productSize" (
 	"id" serial primary key,
-	"size" "sizes" default 'small',
-	"additionalPrice" numeric (12,2),
+	"size" "sizes" not  null,
+	"additionalPrice" int default 0,
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
-
-alter table "productSize" alter column "size" drop default;
-
-insert into "productSize" ("size", "additionalPrice") values ('small', 0), ('medium', 5000), ('large', 10000);
 
 create table "productVariant" (
 	"id" serial primary key,
 	"name" varchar(30) unique not null,
-	"additionalPrice" numeric (12,2),
+	"additionalPrice" int default 0,
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
 
-insert into "productVariant" ("name", "additionalPrice") values ('hot', 0), ('ice', 3000), ('spicy', 2000), ('reguler', 0);
-
-create table "tags" (
+create table "productTags" (
 	"id" serial primary key,
 	"name" varchar(30) unique not null,
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
 
-insert into "tags" ("name") values ('FLASH SALE');
-
 create table "productRatings" (
 	"id" serial primary key,
 	"productId" int references "products" ("id"),
-	"rate" numeric(1,1) not null,
+	"rate" int not null,
 	"reviewMessage" text,
 	"userId" int references "users" ("id"),
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
-
-alter table "productRatings" alter column "rate" type int;
-
-insert into "productRatings" ("productId", "rate", "reviewMessage", "userId")
-values (1, 4, 'Its a really good coffe', 3),(1, 4, 'Its a really good coffe', 3),
-(1, 4, 'Its a really good coffe', 8),
-(1, 5, 'Its a really good things', 2),
-(6, 5, 'Its a really good stuff', 2),
-(6, 4, 'Its a really good item', 6),
-(9, 5, 'Its a really good coffe', 8),
-(9, 5, 'Its a coffe', 3),
-(1, 4, 'Its a really good coffe', 9),
-(5, 4, 'Its a really good coffe', 9),
-(7, 5, 'Its a really good coffe', 2),
-(7, 5, 'Its a really good coffe', 10),
-(7, 5, 'Its a good coffe', 13),
-(1, 4, 'Its a really good coffe', 23),
-(1, 5, 'Its a really good coffe', 23),
-(5, 4, 'Its a good coffe', 3),
-(5, 5, 'Its a really good coffe', 4),
-(6, 4, 'Its a really good coffe', 6),
-(1, 5, 'Its a really good coffe', 7),
-(1, 5, 'Its really good coffe', 3),
-(1, 5, 'Its really good coffe', 9);
 
 create table "categories" (
 	"id" serial primary key,
@@ -113,22 +77,16 @@ create table "productCategories" (
 
 create table "promo" (
 	"id" serial primary key,
-	"name" varchar(30) unique not null,
+	"name" varchar(30) not null,
 	"code" varchar(30) unique not null,
 	"description" text not null,
-	"percentage" bool not null,
-	"maximumPromo" numeric(12,2) not null,
-	"minimumAmount" numeric(12,2) not null,
+	"percentage" float not null,
+	"maximumPromo" int not null,
+	"minimumAmount" int not null,
+	"isExpired" bool default false,
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
-
-insert into "productRatings" ("name", "code", 'description', "percentage", "maximumPromo", "minimumAmount")
-values ('Selamat Hari Ibu', 'HARIIBU10', 'dapatkan diskon 10% special hari ibu', 0.1, 100000, 20000),
-('Selamat Hari Ibu', 'HARIIBU20', 'dapatkan diskon 20% special hari ibu', 0.2, 50000, 15000),
-('Selamat Hari Ibu', 'HARIIBU30', 'dapatkan diskon 30% special hari ibu', 0.3, 40000, 12000),
-('Selamat Hari Ibu', 'HARIIBU40', 'dapatkan diskon 40% special hari ibu', 0.4, 30000, 10000),
-('Selamat Hari Ibu', 'HARIIBU50', 'dapatkan diskon 50% special hari ibu', 0.5, 10000, 2000);
 
 create table "orders" (
 	"id" serial primary key,
@@ -168,6 +126,10 @@ create table "message" (
 ----------------------------------------------------------------------------------------------------------------
 
 begin;
+insert into "users" ("fullName", "email", "password", "address", "phoneNumber", "role")
+values('Admin', 'admin.example@gmial.com', 'admin123', null, null, 'admin'),
+	('Staff', 'staff.example@gmial.com', 'staff123', null, null, 'staff');
+
 insert into "users" ("fullName", "email", "password", "address", "phoneNumber") 
 values ('Sarah Johnson', 'sarah.johnson@example.com', 'qWErT123', '456 Elm Ave', '082345678901'),
 	('David Brown', 'david.brown@example.com', '7sD9F8w', '789 Oak Rd', '083456789012'),
@@ -218,7 +180,7 @@ values ('Sarah Johnson', 'sarah.johnson@example.com', 'qWErT123', '456 Elm Ave',
 	
 -----------------------------------------------------------------------------------------------------------------
 
-	insert into "products" ("name", "description", "price", "isRecommended")
+	insert into "products" ("name", "description", "basePrice", "isRecommended")
 	values ('Cappuccino', 'A classic Italian coffee with espresso, steamed milk, and foam', 25000, true),
 	('Mocha', 'A luscious combination of espresso, chocolate, and milk', 32000, true),
 	('Americano', 'A simple yet strong black coffee made from espresso and water', 22000, false),
@@ -292,6 +254,8 @@ values ('Sarah Johnson', 'sarah.johnson@example.com', 'qWErT123', '456 Elm Ave',
 	insert into "categories" ("name")
 	values ('coffee'), ('non coffee'), ('food');
 
+	insert into "productTags" ("name") values ('FLASH SALE');
+
 ------------------------------------------------------------------------------------------------------------------------------------
 
 	insert into "productCategories" ("productId", "categoryId")
@@ -313,16 +277,6 @@ values ('Sarah Johnson', 'sarah.johnson@example.com', 'qWErT123', '456 Elm Ave',
 	(16, 1),
 	(17, 1),
 	(18, 1),
-	(19, 3),
-	(10, 3),
-	(11, 3),
-	(12, 2),
-	(13, 3),
-	(14, 3),
-	(15, 3),
-	(16, 2),
-	(17, 3),
-	(18, 3),
 	(19, 3),
 	(20, 1),
 	(21, 3),
@@ -372,31 +326,113 @@ values ('Sarah Johnson', 'sarah.johnson@example.com', 'qWErT123', '456 Elm Ave',
 	(65, 3),
 	(66, 2),
 	(67, 3);
+
+------------------------------------------------------------------------------------------------------------------------
+
+insert into "productSize" ("size", "additionalPrice") values ('small', 0), ('medium', 5000), ('large', 10000);
+
+--------------------------------------------------------------------------------------------------------------------------
+
+insert into "productRatings" ("productId", "rate", "reviewMessage", "userId")
+values (1, 4, 'Its a really good coffe', 3),(1, 4, 'Its a really good coffe', 3),
+(1, 4, 'Its a really good coffe', 8),
+(1, 5, 'Its a really good things', 2),
+(6, 5, 'Its a really good stuff', 2),
+(6, 4, 'Its a really good item', 6),
+(9, 5, 'Its a really good coffe', 8),
+(9, 5, 'Its a coffe', 3),
+(1, 4, 'Its a really good coffe', 9),
+(5, 4, 'Its a really good coffe', 9),
+(7, 5, 'Its a really good coffe', 2),
+(7, 5, 'Its a really good coffe', 10),
+(7, 5, 'Its a good coffe', 13),
+(1, 4, 'Its a really good coffe', 23),
+(1, 5, 'Its a really good coffe', 23),
+(5, 4, 'Its a good coffe', 3),
+(5, 5, 'Its a really good coffe', 4),
+(6, 4, 'Its a really good coffe', 6),
+(1, 5, 'Its a really good coffe', 7),
+(1, 5, 'Its really good coffe', 3),
+(1, 5, 'Its really good coffe', 9);
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+insert into "promo" ("name", "code", "description", "percentage", "maximumPromo", "minimumAmount")
+values ('Selamat Hari Ibu', 'HARIIBU10', 'dapatkan diskon 10% special hari ibu', 0.1, 100000, 20000),
+('Selamat Hari Ibu', 'HARIIBU20', 'dapatkan diskon 20% special hari ibu', 0.2, 50000, 15000),
+('Selamat Hari Ibu', 'HARIIBU30', 'dapatkan diskon 30% special hari ibu', 0.3, 40000, 12000),
+('Selamat Hari Ibu', 'HARIIBU40', 'dapatkan diskon 40% special hari ibu', 0.4, 30000, 10000),
+('Selamat Hari Ibu', 'HARIIBU50', 'dapatkan diskon 50% special hari ibu', 0.5, 10000, 2000);
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+insert into "productVariant" ("name", "additionalPrice") values ('hot', 0), ('ice', 3000), ('spicy', 2000), ('reguler', 0);
+
 end;
 
-delete from "productCategories" where "id" > 64;
+alter type "statuses" rename value 'on-progress' to 'on-process';
 
-select "p"."name", "price", "c"."name" as "category" from "products" "p"
-join "productCategories" "pc" on "pc"."productId" = "p"."id"
-join "categories" "c" on "c"."id" = "pc"."categoryId";
+alter table "orderDetails" add column "subTotal" int not null;
 
-select "p"."name", "price", "c"."name" as "category" from "products" "p"
-right join "productCategories" "pc" on "pc"."productId" = "p"."id"
-right join "categories" "c" on "c"."id" = "pc"."categoryId";
+alter table "orders" alter column "deliveryAddress" drop not null;
 
-select "p"."name", "price", "c"."name" as "category" from "products" "p"
-left join "productCategories" "pc" on "pc"."productId" = "p"."id"
-left join "categories" "c" on "c"."id" = "pc"."categoryId";
+insert into "orders" ("userId", "orderNumber", "promoId", "total", "taxAmount", "status", "deliveryAddress",
+"fullName", "email")
+values (3, '#0002-10112023-0001', null, (select "basePrice" from "products" where "id" = 2) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 3), (select "email" from "users" where "id" = 3)),
+(4, '#0003-10112023-0002', null, (select "basePrice" from "products" where "id" = 3) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(4, '#0004-10112023-0003', null, (select "basePrice" from "products" where "id" = 4) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'small'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(4, '#0005-10112023-0004', null, (select "basePrice" from "products" where "id" = 5) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(5, '#0006-10112023-0005', null, (select "basePrice" from "products" where "id" = 6) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0007-10112023-0006', null, (select "basePrice" from "products" where "id" = 7) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0008-10112023-0007', null, (select "basePrice" from "products" where "id" = 8) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'small'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0009-10112023-0008', null, (select "basePrice" from "products" where "id" = 9) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0010-10112023-0009', null, (select "basePrice" from "products" where "id" = 10) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'medium'),
+null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5));
 
-select avg("price") 
-from "products";
+delete from orders;
 
-select sum("price")
-from "products";
+insert into "orderDetails" ("productId", "productSizeId", "productVariantId", "quantity", "orderId", "subtotal") values
+(2, 2, 2, 1, 20, (select "basePrice" from "products" where "id" = 2) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium')),
+(3, 2, 2, 1, 21, (select "basePrice" from "products" where "id" = 2) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium')),
+(4, 1, 1, ),
+(5, 2, 3, ),
+(6, 2, 2, ),
+(7, 2, 3, ),
+(8, 1, 1, ),
+(9, 2, 3, ),
+(10, 1, 2, )
 
-select id, count(*)
-from "productCategories" 
-group by "id";
+--delete from "productCategories" where "id" > 64;
+--
+--select "p"."name", "basePrice", "c"."name" as "category" from "products" "p"
+--join "productCategories" "pc" on "pc"."productId" = "p"."id"
+--join "categories" "c" on "c"."id" = "pc"."categoryId";
+--
+--select "p"."name", "basePrice", "c"."name" as "category" from "products" "p"
+--right join "productCategories" "pc" on "pc"."productId" = "p"."id"
+--right join "categories" "c" on "c"."id" = "pc"."categoryId";
+--
+--select "p"."name", "basePrice", "c"."name" as "category" from "products" "p"
+--left join "productCategories" "pc" on "pc"."productId" = "p"."id"
+--left join "categories" "c" on "c"."id" = "pc"."categoryId";
+--
+--select avg("basePrice") 
+--from "products";
+--
+--select sum("basePrice")
+--from "products";
+--
+--select id, count(*)
+--from "productCategories" 
+--group by "id";
 
 
 
