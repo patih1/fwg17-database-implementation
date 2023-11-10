@@ -15,6 +15,10 @@ create table "users" (
 	"updatedAt" timestamp
 );
 
+insert into users ("fullName", "email", "password", "address", "phoneNumber", "role") 
+values ('Admin', 'admin.example@gmial.com', 'admin123', null, null, 'admin'),
+('staff', 'staff.example@gmial.com', 'staff123', null, null, 'staff');
+
 create table "products" (
 	"id" serial primary key,
 	"name" varchar (30) unique not null,
@@ -35,6 +39,10 @@ create table "productSize" (
 	"updatedAt" timestamp
 );
 
+alter table "productSize" alter column "size" drop default;
+
+insert into "productSize" ("size", "additionalPrice") values ('small', 0), ('medium', 5000), ('large', 10000);
+
 create table "productVariant" (
 	"id" serial primary key,
 	"name" varchar(30) unique not null,
@@ -43,12 +51,16 @@ create table "productVariant" (
 	"updatedAt" timestamp
 );
 
+insert into "productVariant" ("name", "additionalPrice") values ('hot', 0), ('ice', 3000), ('spicy', 2000), ('reguler', 0);
+
 create table "tags" (
 	"id" serial primary key,
 	"name" varchar(30) unique not null,
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
+
+insert into "tags" ("name") values ('FLASH SALE');
 
 create table "productRatings" (
 	"id" serial primary key,
@@ -59,6 +71,30 @@ create table "productRatings" (
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
+
+alter table "productRatings" alter column "rate" type int;
+
+insert into "productRatings" ("productId", "rate", "reviewMessage", "userId")
+values (1, 4, 'Its a really good coffe', 3),(1, 4, 'Its a really good coffe', 3),
+(1, 4, 'Its a really good coffe', 8),
+(1, 5, 'Its a really good things', 2),
+(6, 5, 'Its a really good stuff', 2),
+(6, 4, 'Its a really good item', 6),
+(9, 5, 'Its a really good coffe', 8),
+(9, 5, 'Its a coffe', 3),
+(1, 4, 'Its a really good coffe', 9),
+(5, 4, 'Its a really good coffe', 9),
+(7, 5, 'Its a really good coffe', 2),
+(7, 5, 'Its a really good coffe', 10),
+(7, 5, 'Its a good coffe', 13),
+(1, 4, 'Its a really good coffe', 23),
+(1, 5, 'Its a really good coffe', 23),
+(5, 4, 'Its a good coffe', 3),
+(5, 5, 'Its a really good coffe', 4),
+(6, 4, 'Its a really good coffe', 6),
+(1, 5, 'Its a really good coffe', 7),
+(1, 5, 'Its really good coffe', 3),
+(1, 5, 'Its really good coffe', 9);
 
 create table "categories" (
 	"id" serial primary key,
@@ -86,6 +122,13 @@ create table "promo" (
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
+
+insert into "productRatings" ("name", "code", 'description', "percentage", "maximumPromo", "minimumAmount")
+values ('Selamat Hari Ibu', 'HARIIBU10', 'dapatkan diskon 10% special hari ibu', 0.1, 100000, 20000),
+('Selamat Hari Ibu', 'HARIIBU20', 'dapatkan diskon 20% special hari ibu', 0.2, 50000, 15000),
+('Selamat Hari Ibu', 'HARIIBU30', 'dapatkan diskon 30% special hari ibu', 0.3, 40000, 12000),
+('Selamat Hari Ibu', 'HARIIBU40', 'dapatkan diskon 40% special hari ibu', 0.4, 30000, 10000),
+('Selamat Hari Ibu', 'HARIIBU50', 'dapatkan diskon 50% special hari ibu', 0.5, 10000, 2000);
 
 create table "orders" (
 	"id" serial primary key,
@@ -330,6 +373,31 @@ values ('Sarah Johnson', 'sarah.johnson@example.com', 'qWErT123', '456 Elm Ave',
 	(66, 2),
 	(67, 3);
 end;
+
+delete from "productCategories" where "id" > 64;
+
+select "p"."name", "price", "c"."name" as "category" from "products" "p"
+join "productCategories" "pc" on "pc"."productId" = "p"."id"
+join "categories" "c" on "c"."id" = "pc"."categoryId";
+
+select "p"."name", "price", "c"."name" as "category" from "products" "p"
+right join "productCategories" "pc" on "pc"."productId" = "p"."id"
+right join "categories" "c" on "c"."id" = "pc"."categoryId";
+
+select "p"."name", "price", "c"."name" as "category" from "products" "p"
+left join "productCategories" "pc" on "pc"."productId" = "p"."id"
+left join "categories" "c" on "c"."id" = "pc"."categoryId";
+
+select avg("price") 
+from "products";
+
+select sum("price")
+from "products";
+
+select id, count(*)
+from "productCategories" 
+group by "id";
+
 
 
 
