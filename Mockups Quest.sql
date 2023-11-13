@@ -378,37 +378,34 @@ alter table "orders" alter column "deliveryAddress" drop not null;
 
 insert into "orders" ("userId", "orderNumber", "promoId", "total", "taxAmount", "status", "deliveryAddress",
 "fullName", "email")
-values (3, '#0002-10112023-0001', null, (select "basePrice" from "products" where "id" = 2) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 3), (select "email" from "users" where "id" = 3)),
-(4, '#0003-10112023-0002', null, (select "basePrice" from "products" where "id" = 3) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
-(4, '#0004-10112023-0003', null, (select "basePrice" from "products" where "id" = 4) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'small'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
-(4, '#0005-10112023-0004', null, (select "basePrice" from "products" where "id" = 5) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
-(5, '#0006-10112023-0005', null, (select "basePrice" from "products" where "id" = 6) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
-(5, '#0007-10112023-0006', null, (select "basePrice" from "products" where "id" = 7) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
-(5, '#0008-10112023-0007', null, (select "basePrice" from "products" where "id" = 8) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'small'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
-(5, '#0009-10112023-0008', null, (select "basePrice" from "products" where "id" = 9) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
-(5, '#0010-10112023-0009', null, (select "basePrice" from "products" where "id" = 10) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'medium'),
-null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5));
+values (3, '#0002-10112023-0001', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 3), (select "email" from "users" where "id" = 3)),
+(4, '#0003-10112023-0002', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(4, '#0004-10112023-0003', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(4, '#0005-10112023-0004', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(5, '#0006-10112023-0005', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0007-10112023-0006', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0008-10112023-0007', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0009-10112023-0008', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0010-10112023-0009', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5));
 
-delete from orders;
 
-insert into "orderDetails" ("productId", "productSizeId", "productVariantId", "quantity", "orderId", "subtotal") values
-(2, 2, 2, 1, 20, (select "basePrice" from "products" where "id" = 2) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium')),
-(3, 2, 2, 1, 21, (select "basePrice" from "products" where "id" = 2) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium')),
-(4, 1, 1, ),
-(5, 2, 3, ),
-(6, 2, 2, ),
-(7, 2, 3, ),
-(8, 1, 1, ),
-(9, 2, 3, ),
-(10, 1, 2, )
+
+insert into "orderDetails" ("productId", "productSizeId", "productVariantId", "quantity", "orderId", "subTotal") values
+(2, 2, 2, 1, 1, (select "basePrice" from "products" where "id" = 2) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium')),
+(3, 2, 2, 1, 2, (select "basePrice" from "products" where "id" = 3) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium')),
+(4, 1, 1, 1, 3, (select "basePrice" from "products" where "id" = 4) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'small')),
+(5, 2, 3, 1, 4, (select "basePrice" from "products" where "id" = 5) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large')),
+(6, 2, 2, 5, 5, 5 * ((select "basePrice" from "products" where "id" = 6) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'medium'))),
+(7, 2, 3, 1, 6, 1 * ((select "basePrice" from "products" where "id" = 7) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'))),
+(8, 1, 1, 4, 6, 4 * ((select "basePrice" from "products" where "id" = 8) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'small'))),
+(9, 2, 3, 2, 7, 2 * ((select "basePrice" from "products" where "id" = 9) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'))),
+(10, 1, 2, 3, 7, 3 * ((select "basePrice" from "products" where "id" = 10) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'medium'))),
+(2, 2, 3, 1, 8, 1 * ((select "basePrice" from "products" where "id" = 2) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'))),
+(5, 2, 3, 2, 8, 2 * ((select "basePrice" from "products" where "id" = 5) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'))),
+(12, 1, 2, 2, 8, 2 * ((select "basePrice" from "products" where "id" = 12) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'medium'))),
+(9, 2, 3, 1, 9, 1 * ((select "basePrice" from "products" where "id" = 9) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'))),
+(7, 2, 3, 1, 9, 1 * ((select "basePrice" from "products" where "id" = 7) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'))),
+(4, 1, 2, 3, 9, 3 * ((select "basePrice" from "products" where "id" = 4) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'medium')));
 
 --delete from "productCategories" where "id" > 64;
 --
