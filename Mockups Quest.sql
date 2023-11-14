@@ -12,12 +12,6 @@ create table "users" (
 	"updatedAt" timestamp
 );
 
---alter table "users" add column "usia" int;
---
---alter table "users" drop column "usia";
---
---drop table "users";
-
 create table "products" (
 	"id" serial primary key,
 	"name" varchar (30) unique not null,
@@ -130,7 +124,6 @@ create table "message" (
 );
 
 ----------------------------------------------------------------------------------------------------------------
-
 
 insert into "users" ("fullName", "email", "password", "address", "phoneNumber", "role")
 values('Admin', 'admin.example@gmial.com', 'admin123', null, null, 'admin'),
@@ -433,15 +426,116 @@ update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 9;
 
 end;
 
---delete from "orders" where "id" = 9;
+select "p"."name", "p"."id", "basePrice", "o"."orderNumber", "o"."total", "od"."quantity" from "products" "p"
+left join "orderDetails" "od" on "od"."productId" = "p"."id"
+left join "orders" "o" on "o"."id" = "od"."orderId";
 
---select "p"."name", "p"."id", "basePrice", "o"."orderNumber", "o"."total", "od"."quantity" from "products" "p"
---join "orderDetails" "od" on "od"."productId" = "p"."id"
---join "orders" "o" on "o"."id" = "od"."orderId";
---
---select "p"."name", "basePrice", "c"."name" as "category" from "products" "p"
---join "productCategories" "pc" on "pc"."productId" = "p"."id"
---join "categories" "c" on "c"."id" = "pc"."categoryId";
+select "p"."name", "basePrice", "c"."name" as "category" from "products" "p"
+join "productCategories" "pc" on "pc"."productId" = "p"."id"
+join "categories" "c" on "c"."id" = "pc"."categoryId";
+
+
+--CRUD users
+select * from "users";
+
+alter table "users" add column "usia" int;
+
+update "users" 
+set "usia" = 20 where id <= 30;
+
+update "users"
+set "usia" = 18 where id > 30;
+
+select "fullName" from "users" where usia < 19;
+
+alter table "users" alter column "usia" set not null;
+
+alter table "users" alter column "usia" drop not null;
+
+alter table "users" drop column "usia";
+
+delete from "users" where id = 19;
+
+--drop table "users";
+
+--CRUD product
+select * from "products" where id > 29;
+
+alter table "products" add column "stock" int;
+
+update "products" set "stock" = 12 where id = 35;
+
+alter table "products" alter column "stock" set default 10;
+
+alter table "products" alter column "stock" drop default;
+--to not violate foreign key
+delete from "productCategories" where "productId" = 35;
+
+delete from "products" where "stock" = 12;
+
+delete from "productCategories" where "productId" = (select "id" from "products" where id = 36);
+
+delete from "products" where id = 36;
+
+alter table "products" drop column "stock";
+
+--Crud order
+select "orderNumber", "status" from "orders" where "userId" = 20;
+
+insert into "orders" ("userId", "orderNumber", "promoId", "total", "taxAmount", "status", "deliveryAddress",
+"fullName", "email") values
+(20, '#0003-14112023-0001', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4));
+
+update "orders" set "status" = 'canceled' where "orderNumber" = '#0003-14112023-0001';
+
+delete from "orders" where "orderNumber" = '#0003-14112023-0001';
+
+--CRUD promo
+select "name", "code" from "promo";
+
+update "promo" set "code" = 'FAZZFOOD50' where "code" = 'HARIIBU50';
+
+delete from "promo" where id > 4;
+
+--query Product based on name
+select "name" from "products" where "name" = 'Americano';
+
+select "name" from "products" where "name" like 'Americano';
+
+select "name" from "products" where "name" ilike 'ca%';
+
+select "name" from "products" where "name" ilike '%no';
+
+select "name" from "products" where "name" ilike '%la%';
+
+--query product based on nama, kategori, promo dan harga
+select "p"."name", "c"."name" as "category" from "products" "p" join "productCategories" "pc" on "pc"."productId" = "p"."id"
+join "categories" "c" on "c"."id" = "pc"."categoryId"
+join "orderDetails" "od" on "od"."productId" = "p"."id"
+join "orders" "o" on "o"."id" = "od"."orderId"
+join "promo" "pr" on "pr"."id" = "o"."promoId"
+where "pc"."categoryId" = 1 and "p"."name" ilike '%a%' and "o"."promoId" = 1 and "p"."basePrice" < 50000;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
