@@ -1,7 +1,4 @@
 create type "roles" as enum ('admin', 'staff', 'customer');
-create type "sizes" as enum ('small', 'medium', 'large');
-create type "statuses" as enum ('on-progress', 'delivered', 'canceled', 'ready-to-pick');
-
 create table "users" (
 	"id" serial primary key,
 	"fullName" varchar(50) not null,
@@ -27,6 +24,7 @@ create table "products" (
 	"updatedAt" timestamp
 );
 
+create type "sizes" as enum ('small', 'medium', 'large');
 create table "productSize" (
 	"id" serial primary key,
 	"size" "sizes" not  null,
@@ -88,15 +86,17 @@ create table "promo" (
 	"updatedAt" timestamp
 );
 
+
+create type "statuses" as enum ('on-process', 'delivered', 'canceled', 'ready-to-pick');
 create table "orders" (
 	"id" serial primary key,
 	"userId" int references "users" ("id"),
 	"orderNumber" varchar(30) not null,
 	"promoId" int references "promo" ("id"),
-	"total" numeric(12,2) not null,
-	"taxAmount" numeric (12,2),
+	"total" int not null,
+	"taxAmount" int,
 	"status" "statuses",
-	"deliveryAddress" text not null,
+	"deliveryAddress" text,
 	"fullName" varchar(50) not null,
 	"email" varchar(50) not null,
 	"createdAt" timestamp default now(),
@@ -110,6 +110,7 @@ create table "orderDetails" (
 	"productVariantId" int references "productVariant" ("id"),
 	"quantity" int not null,
 	"orderId" int references "orders" ("id"),
+	"subTotal" int not null
 	"createdAt" timestamp default now(),
 	"updatedAt" timestamp
 );
@@ -125,7 +126,7 @@ create table "message" (
 
 ----------------------------------------------------------------------------------------------------------------
 
-begin;
+
 insert into "users" ("fullName", "email", "password", "address", "phoneNumber", "role")
 values('Admin', 'admin.example@gmial.com', 'admin123', null, null, 'admin'),
 	('Staff', 'staff.example@gmial.com', 'staff123', null, null, 'staff');
@@ -368,26 +369,19 @@ values ('Selamat Hari Ibu', 'HARIIBU10', 'dapatkan diskon 10% special hari ibu',
 
 insert into "productVariant" ("name", "additionalPrice") values ('hot', 0), ('ice', 3000), ('spicy', 2000), ('reguler', 0);
 
-end;
-
-alter type "statuses" rename value 'on-progress' to 'on-process';
-
-alter table "orderDetails" add column "subTotal" int not null;
-
-alter table "orders" alter column "deliveryAddress" drop not null;
+begin;
 
 insert into "orders" ("userId", "orderNumber", "promoId", "total", "taxAmount", "status", "deliveryAddress",
 "fullName", "email")
 values (3, '#0002-10112023-0001', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 3), (select "email" from "users" where "id" = 3)),
-(4, '#0003-10112023-0002', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
-(4, '#0004-10112023-0003', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
-(4, '#0005-10112023-0004', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
-(5, '#0006-10112023-0005', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
-(5, '#0007-10112023-0006', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
-(5, '#0008-10112023-0007', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
-(5, '#0009-10112023-0008', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
-(5, '#0010-10112023-0009', null, 10, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5));
-
+(4, '#0003-10112023-0002', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(4, '#0004-10112023-0003', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(4, '#0005-10112023-0004', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 4), (select "email" from "users" where "id" = 4)),
+(5, '#0006-10112023-0005', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0007-10112023-0006', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0008-10112023-0007', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0009-10112023-0008', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5)),
+(5, '#0010-10112023-0009', null, 0, null, 'on-process', null, (select "fullName" from "users" where "id" = 5), (select "email" from "users" where "id" = 5));
 
 
 insert into "orderDetails" ("productId", "productSizeId", "productVariantId", "quantity", "orderId", "subTotal") values
@@ -407,30 +401,35 @@ insert into "orderDetails" ("productId", "productSizeId", "productVariantId", "q
 (7, 2, 3, 1, 9, 1 * ((select "basePrice" from "products" where "id" = 7) + (select "additionalPrice" from "productVariant" where "name" = 'ice') + (select "additionalPrice" from "productSize" where "size" = 'large'))),
 (4, 1, 2, 3, 9, 3 * ((select "basePrice" from "products" where "id" = 4) + (select "additionalPrice" from "productVariant" where "name" = 'hot') + (select "additionalPrice" from "productSize" where "size" = 'medium')));
 
---delete from "productCategories" where "id" > 64;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 1) where "id" = 1;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 2) where "id" = 2;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 3) where "id" = 3;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 4) where "id" = 4;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 5) where "id" = 5;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 6) where "id" = 6;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 7) where "id" = 7;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 8) where "id" = 8;
+update "orders" set "total" = (select sum("subTotal") from "orderDetails" where "orderId" = 9) where "id" = 9;
+
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 1;
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 2;
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 3;
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 4;
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 5;
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 6;
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 7;
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 8;
+update "orders" set "taxAmount" = "total" + "total" * 0.1 where "id" = 9;
+
+end;
+
+--select "p"."name", "p"."id", "basePrice", "o"."orderNumber", "o"."total", "od"."quantity" from "products" "p"
+--right join "orderDetails" "od" on "od"."productId" = "p"."id"
+--right join "orders" "o" on "o"."id" = "od"."orderId";
 --
 --select "p"."name", "basePrice", "c"."name" as "category" from "products" "p"
 --join "productCategories" "pc" on "pc"."productId" = "p"."id"
 --join "categories" "c" on "c"."id" = "pc"."categoryId";
---
---select "p"."name", "basePrice", "c"."name" as "category" from "products" "p"
---right join "productCategories" "pc" on "pc"."productId" = "p"."id"
---right join "categories" "c" on "c"."id" = "pc"."categoryId";
---
---select "p"."name", "basePrice", "c"."name" as "category" from "products" "p"
---left join "productCategories" "pc" on "pc"."productId" = "p"."id"
---left join "categories" "c" on "c"."id" = "pc"."categoryId";
---
---select avg("basePrice") 
---from "products";
---
---select sum("basePrice")
---from "products";
---
---select id, count(*)
---from "productCategories" 
---group by "id";
-
 
 
 
